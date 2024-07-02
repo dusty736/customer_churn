@@ -1,27 +1,38 @@
 # End-to-End Predictive Analytics Project Example
 
+This dataset contains information about bank customers and their churn status, which indicates whether they have exited the bank or not. It is suitable for exploring and analyzing factors influencing customer churn in banking institutions and for building predictive models to identify customers at risk of churning.
+
 ## Project Overview
-**Objective**: Predict which customers are likely to churn (i.e., stop doing business with the company) in the next quarter.
+**Objective**: Predict which customers are likely to churn (i.e., stop doing business with the bank).
 
 ## Step-by-Step Process
 
 ### 1. Define the Problem
-- **Business Understanding**: Meet with stakeholders to understand the business context, objectives, and the importance of predicting churn.
 - **Goals**: Reduce churn rate by identifying at-risk customers and implementing retention strategies.
 
 ### 2. Data Collection
-- **Internal Data**: Collect data from various internal sources such as CRM, transaction databases, customer service logs, and marketing platforms.
-- **External Data**: Integrate external data that might influence churn, like economic indicators or social media sentiment.
+The data has been pulled from a [Kaggle banking churn datastet](https://www.kaggle.com/datasets/saurabhbadole/bank-customer-churn-prediction-dataset?resource=download) and contains the following features:
+- **CustomerID**: Unique identifier for each customer.
+- **Surname**: Customer’s last name.
+- **CreditScore**: Numerical value representing the customer's credit score.
+- **Geography**: The customer’s location (e.g., France, Spain, Germany).
+- **Gender**: Customer's gender (Male/Female).
+- **Age**: Customer's age.
+- **Tenure**: Number of years the customer has been with the bank.
+- **Balance**: Account balance.
+- **NumOfProducts**: Number of bank products the customer uses.
+- **HasCrCard**: Binary flag indicating whether the customer has a credit card (1 = Yes, 0 = No).
+- **IsActiveMember**: Binary flag indicating whether the customer is an active member (1 = Yes, 0 = No).
+- **EstimatedSalary**: Customer’s estimated salary.
+- **Exited**: Binary flag indicating whether the customer has churned (1 = Yes, 0 = No).
 
 ### 3. Data Preparation
-- **Cleaning**: Handle missing values, remove duplicates, and correct errors.
-- **Transformation**: Normalize/standardize data, encode categorical variables, and create new features (e.g., customer tenure, average purchase value).
 - **Exploratory Data Analysis (EDA)**: Analyze distributions, correlations, and visualize data to understand patterns and relationships.
+- **Cleaning**: Handle missing values, remove duplicates, and correct errors.
+- **Transformation**: Normalize/standardize data, encode categorical variables, and create new features.
 
 ### 4. Feature Engineering
-- **Behavioral Features**: Frequency of purchases, average purchase amount, customer service interactions.
-- **Demographic Features**: Age, location, gender.
-- **Engagement Features**: Email open rates, response to promotions, website visit frequency.
+- 
 
 ### 5. Model Selection and Training
 - **Data Splitting**: Split data into training and test sets (e.g., 70% training, 30% testing).
@@ -50,7 +61,4 @@
 - **Dashboard Creation**: Create dashboards to visualize churn predictions and track the effectiveness of retention strategies.
 - **Stakeholder Communication**: Regularly report findings and model performance to stakeholders and gather feedback for continuous improvement.
 
-## Example in Action
-**Case Study**: Imagine working with a retailer where the goal is to predict customer churn. The project would involve collaboration with their marketing, customer service, and data teams to gather data and understand customer behavior patterns. After building and deploying the model, the marketing team could use the predictions to create personalized retention campaigns aimed at the identified at-risk customers.
-
-This end-to-end process ensures a systematic approach to solving the problem using predictive analytics, leading to actionable insights and measurable business outcomes.
+Special thanks to ChatGPT for providing guidance and assistance with the project, including assisting and providing feedback on the predictive analytics workflow. 
