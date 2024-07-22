@@ -332,6 +332,55 @@ random_forest_predictions <- predict(random_forest_model, newdata = testing_data
 prediction_df$rf_pred <- random_forest_predictions
 
 ################################################################################
+# Model 8: XGBoost
+################################################################################
+
+# Prepare the data matrix and response vector
+x_train <- model.matrix(exited_factor ~ . -customer_id, data = training_data)[, -1]
+y_train <- ifelse(training_data$exited_factor == "churn", "yes", "no")  # Convert to binary factor
+
+# Calculate class weights
+neg_pos_ratio <- sum(y_train == "no") / sum(y_train == "yes")
+
+# Set up train control for 5-fold cross-validation using caret
+train_control <- caret::trainControl(
+  method = "cv",
+  number = 5,
+  summaryFunction = twoClassSummary,  # Necessary for ROC, Sensitivity, Specificity
+  classProbs = TRUE  # Necessary for ROC, Sensitivity, Specificity
+)
+
+# Define a more extensive tuning grid for xgboost
+tune_grid <- expand.grid(
+  nrounds = c(50, 100, 200),
+  max_depth = c(3, 6, 9),
+  eta = c(0.01, 0.1, 0.3),
+  gamma = c(0, 0.1, 0.5),
+  colsample_bytree = c(0.5, 0.7, 1),
+  min_child_weight = c(1, 5, 10),
+  subsample = c(0.5, 0.7, 1)
+)
+
+
+# Fit the XGBoost model using caret with cross-validation
+xgb_model <- caret::train(
+  x = x_train,
+  y = factor(y_train, levels = c("no", "yes")),  # Ensuring proper factor levels
+  method = "xgbTree",
+  trControl = train_control,
+  tuneGrid = tune_grid,
+  metric = "Sensitivity",  # "Sensitivity" should also work, if properly set
+  scale_pos_weight = 1/neg_pos_ratio
+)
+
+# Convert predictions to factor
+xgb_predictions <- predict(xgb_model, newdata = x_test, type = "prob")[,2]
+
+# Convert probabilities to binary predictions
+xgb_predictions_binary <- factor(ifelse(xgb_predictions > 0.5, "churn", "remain"), levels=levels(modeling_df$exited_factor))
+prediction_df$xgb_pred <- xgb_predictions_binary
+
+################################################################################
 # Create Coefficient DF
 ################################################################################
 
@@ -410,6 +459,7 @@ lasso_lr_results <- calculate_metrics(prediction_df$lasso_lr_pred, true_values)
 en_lr_results <- calculate_metrics(prediction_df$elastic_net_lr_pred, true_values)
 dt_lr_results <- calculate_metrics(prediction_df$decision_tree_pred, true_values)
 rf_lr_results <- calculate_metrics(prediction_df$rf_pred, true_values)
+xgb_lr_results <- calculate_metrics(prediction_df$xgb_pred, true_values)
 
 # Combine results into a single dataframe
 metrics_df <- rbind(
@@ -419,7 +469,8 @@ metrics_df <- rbind(
   cbind(model = "Lasso LR", lasso_lr_results$performance),
   cbind(model = "Elastic Net LR", en_lr_results$performance),
   cbind(model = "Decision Tree", dt_lr_results$performance),
-  cbind(model = "Random Forest", rf_lr_results$performance)
+  cbind(model = "Random Forest", rf_lr_results$performance),
+  cbind(model = "XGBoost", xgb_lr_results$performance)
 )
 
 row.names(metrics_df) <- NULL
@@ -445,4 +496,5 @@ combined_plot <- cowplot::plot_grid(
   ncol = 3
 )
 
+ggsave("plots/model_cm.png", plot = combined_plot, width = 10, height = 10, units = "in", dpi = 300)
 
